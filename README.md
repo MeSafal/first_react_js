@@ -1,133 +1,75 @@
-````markdown
 # first_react_js
 
-Small, focused React admin-panel prototype — Day 1 of the frontend journey.  
-Built with Create React App (CRA). Recommend migrating to Vite for real work.
+Minimal React starter — learning project / small admin-panel proof-of-concept.
 
----
+## Features
 
-## Quick snapshot
-- Single-page React app
-- Basic state example in `src/App.jsx`
-- Meant for local dev and later connection to a Laravel backend via API
+* Starter React app (Vite recommended)
+* Simple state demo in `src/App.jsx`
+* Fast dev server, instant HMR
+* Clean folder structure to extend into an admin panel
 
----
+## Requirements
 
-## Prerequisites
-- Node.js (16+) and npm (or yarn)
-- Git (optional)
+* Node.js **16+**
+* npm (or pnpm/yarn)
 
----
+## Quick start (Vite — recommended)
 
-## Setup (current CRA project)
 ```bash
-# clone
-git clone <your-repo-url> first_react_js
+git clone <your-repo-url>
 cd first_react_js
-
-# install deps
-npm install
-
-# dev server
-npm start
-
-# build for production
-npm run build
-````
-
----
-
-## If you prefer Vite (recommended)
-
-```bash
-# create fresh Vite project (recommended for speed)
-npm create vite@latest my-admin-panel
-cd my-admin-panel
 npm install
 npm run dev
+# Open: http://localhost:5173
 ```
 
-*Migration note: Vite is faster, simpler, and has modern defaults.*
+## Quick start (Create React App — fallback)
 
----
-
-## Available scripts (CRA)
-
-* `npm start` — start dev server (hot reload)
-* `npm run build` — production bundle in `build/`
-* `npm test` — run tests (if added)
-* `npm run eject` — eject CRA (one-way)
-
----
-
-## Project structure (key files)
-
-```
-first_react_js/
-├─ public/
-│  └─ index.html
-├─ src/
-│  ├─ assets/
-│  ├─ App.jsx
-│  ├─ index.js
-│  └─ App.css
-├─ package.json
-└─ README.md
+```bash
+git clone <your-repo-url>
+cd first_react_js
+npm install
+npm start
+# Open: http://localhost:3000
 ```
 
----
+## Available scripts
 
-## Connect to backend (Laravel API)
+* `npm run dev` — start Vite dev server
+* `npm start` — start CRA dev server (if project was created with CRA)
+* `npm run build` — production build
+* `npm run preview` — preview the Vite build locally
 
-1. Add environment variables (create `.env.local` at project root):
+## Where to edit
 
+* `src/App.jsx` — main component (your playground)
+* `src/main.jsx` (or `src/index.js`) — app bootstrap / where React mounts
+* `index.html` (root HTML)
+* `src/assets/` — static assets (logo, images, etc.)
+* `src/styles` or `src/App.css` — styling
+
+## Notes & best practices
+
+* This repo is for learning and iteration. Keep commits small and descriptive.
+* Prefer Vite for new React projects — faster installs and cleaner deps.
+* Keep backend (Laravel) separated; communicate via API endpoints when integrating.
+* Add `.env` for environment-specific variables (do **not** commit secrets).
+
+## GitHub publish (simple)
+
+```bash
+git add .
+git commit -m "Initial React starter"
+git branch -M main
+git remote add origin <your-repo-url>
+git push -u origin main
 ```
-REACT_APP_API_BASE_URL=http://localhost:8000/api
-```
-
-2. Use `fetch` or `axios`:
-
-```js
-// example
-const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/users`);
-```
-
-3. Handle CORS on Laravel side (`cors` middleware / `laravel-cors` config).
-
----
-
-## Tips & best practices
-
-* Keep UI presentational components separate from data/container components.
-* Use `axios` for API calls + interceptors for auth tokens.
-* Move state to Context or a state manager (Redux / Zustand) when app grows.
-* Add linting (ESLint + Prettier) before PRs.
-
----
-
-## Todo (next steps)
-
-* Replace CRA with Vite
-* Create basic admin layout (sidebar, topbar, table)
-* Add auth flow (token-based) and connect to Laravel
-* Add unit tests for critical components
-
----
-
-## Contributing
-
-Small PRs welcome. Keep changes focused and document behavior.
-
----
 
 ## License
 
-MIT — feel free to reuse and iterate.
-
----
+MIT — modify as you like.
 
 ## Author
 
-Er. Gokul Subedi
-
-```
+Er. Gokul Subedi — Day 1: React. Long game: Robotics.
