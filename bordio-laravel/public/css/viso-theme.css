@@ -1,0 +1,456 @@
+/* ================================================
+   VISOBOTICS PREMIUM THEME
+   ================================================ */
+
+/* ===========================
+   CSS CUSTOM PROPERTIES
+   =========================== */
+:root {
+    --viso-primary: #3b82f6;
+    --viso-primary-hover: #2563eb;
+    --viso-primary-light: rgba(59, 130, 246, 0.1);
+    --viso-primary-glow: rgba(59, 130, 246, 0.3);
+
+    --viso-sidebar-bg: #0f172a;
+    --viso-sidebar-text: #94a3b8;
+    --viso-sidebar-hover: #1e293b;
+    --viso-sidebar-active: rgba(59, 130, 246, 0.15);
+    --viso-sidebar-width: 260px;
+
+    --viso-bg-main: #f8fafc;
+    --viso-bg-card: #ffffff;
+    --viso-text-main: #1e293b;
+    --viso-text-muted: #64748b;
+    --viso-border: #e2e8f0;
+    --viso-border-light: #f1f5f9;
+
+    --viso-radius: 8px;
+    --viso-radius-lg: 12px;
+    --viso-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --viso-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --viso-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+    --viso-danger: #ef4444;
+    --viso-success: #22c55e;
+    --viso-warning: #f59e0b;
+    --viso-info: #06b6d4;
+}
+
+/* ===========================
+   GLOBAL & TYPOGRAPHY
+   =========================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    background-color: var(--viso-bg-main);
+    color: var(--viso-text-main);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===========================
+   SCROLLBARS (ULTRA-SLIM)
+   =========================== */
+.viso-scroll::-webkit-scrollbar,
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+.viso-scroll::-webkit-scrollbar-track,
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.viso-scroll::-webkit-scrollbar-thumb,
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 9999px;
+}
+.viso-scroll::-webkit-scrollbar-thumb:hover,
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #94a3b8;
+}
+
+/* ===========================
+   LAYOUT
+   =========================== */
+.viso-app {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.viso-sidebar {
+    width: var(--viso-sidebar-width);
+    min-width: var(--viso-sidebar-width);
+    max-width: var(--viso-sidebar-width);
+    background-color: var(--viso-sidebar-bg);
+    color: var(--viso-sidebar-text);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    border-right: 1px solid #1e293b;
+}
+
+.viso-main {
+    flex-grow: 1;
+    overflow-y: auto;
+    background-color: var(--viso-bg-main);
+    margin-left: var(--viso-sidebar-width);
+    min-height: 100vh;
+}
+
+/* ===========================
+   SIDEBAR ITEMS
+   =========================== */
+.viso-sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    margin: 2px 0.5rem;
+    border-radius: 6px;
+    color: var(--viso-sidebar-text);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.15s ease;
+    border: none;
+    background: transparent;
+    width: calc(100% - 1rem);
+    text-align: left;
+    cursor: pointer;
+}
+.viso-sidebar-item:hover {
+    background-color: var(--viso-sidebar-hover);
+    color: #ffffff;
+}
+.viso-sidebar-item.active {
+    background-color: var(--viso-sidebar-active);
+    color: var(--viso-primary);
+    border-left: 3px solid var(--viso-primary);
+}
+.viso-sidebar-item i {
+    width: 18px;
+    text-align: center;
+    font-size: 16px;
+}
+
+.viso-sidebar-section-title {
+    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: rgba(255,255,255,0.35);
+    padding: 0.5rem 0.875rem;
+    cursor: pointer;
+    transition: color 0.15s;
+}
+.viso-sidebar-section-title:hover { color: rgba(255,255,255,0.7); }
+
+/* ===========================
+   CARDS
+   =========================== */
+.card {
+    border: 0 !important;
+    box-shadow: var(--viso-shadow-sm) !important;
+    border-radius: var(--viso-radius) !important;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.card:hover {
+    box-shadow: var(--viso-shadow-md) !important;
+}
+.card-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--viso-border-light);
+    font-weight: 600;
+}
+
+/* ===========================
+   BUTTONS
+   =========================== */
+.btn {
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+.btn-primary {
+    background-color: var(--viso-primary) !important;
+    border-color: var(--viso-primary) !important;
+    color: white !important;
+}
+.btn-primary:hover {
+    background-color: var(--viso-primary-hover) !important;
+    border-color: var(--viso-primary-hover) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px var(--viso-primary-glow);
+}
+.btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+}
+.btn-light {
+    background-color: #f8fafc;
+    border-color: var(--viso-border);
+    color: var(--viso-text-muted);
+}
+.btn-light:hover {
+    background-color: #ffffff;
+    border-color: #cbd5e1;
+    color: #475569;
+}
+
+/* ===========================
+   BADGES
+   =========================== */
+.badge {
+    font-weight: 500;
+    padding: 0.25rem 0.625rem;
+    border-radius: 999px;
+}
+
+/* ===========================
+   FORMS
+   =========================== */
+.form-control,
+.form-select {
+    border-color: var(--viso-border);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--viso-primary);
+    box-shadow: 0 0 0 3px var(--viso-primary-light);
+}
+.form-control-sm {
+    font-size: 0.8125rem;
+    padding: 0.375rem 0.625rem;
+}
+
+/* ===========================
+   TASK ROW
+   =========================== */
+.viso-task-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: white;
+    border: 1px solid var(--viso-border-light);
+    border-radius: var(--viso-radius);
+    box-shadow: var(--viso-shadow-sm);
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+.viso-task-row:hover {
+    box-shadow: var(--viso-shadow-md);
+    transform: translateY(-1px);
+}
+.viso-task-row .task-title {
+    flex-grow: 1;
+    font-weight: 500;
+}
+.viso-task-row .task-title.completed {
+    text-decoration: line-through;
+    color: var(--viso-text-muted);
+}
+
+/* ===========================
+   STAT CARD
+   =========================== */
+.viso-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+}
+.viso-stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+/* ===========================
+   KANBAN
+   =========================== */
+.viso-kanban-col {
+    min-width: 280px;
+    width: 280px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.viso-kanban-drop {
+    flex-grow: 1;
+    border-radius: var(--viso-radius-lg);
+    padding: 0.5rem;
+    background: var(--viso-bg-main);
+    border: 2px solid transparent;
+    transition: border-color 0.2s, background-color 0.2s;
+    min-height: 200px;
+}
+.viso-kanban-drop.drag-over {
+    border-color: var(--viso-primary);
+    background-color: var(--viso-primary-light);
+}
+.viso-kanban-card {
+    background: white;
+    border: 1px solid var(--viso-border-light);
+    border-radius: var(--viso-radius);
+    box-shadow: var(--viso-shadow-sm);
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+    cursor: grab;
+    transition: box-shadow 0.2s, transform 0.15s;
+    user-select: none;
+}
+.viso-kanban-card:hover {
+    box-shadow: var(--viso-shadow-md);
+}
+.viso-kanban-card.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+/* ===========================
+   SLIDE-OVER MODAL
+   =========================== */
+.viso-backdrop {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 1040;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+.viso-backdrop.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.viso-slide-over {
+    position: fixed;
+    top: 0; right: 0;
+    height: 100vh;
+    width: 100%;
+    max-width: 800px;
+    background: white;
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+    z-index: 1050;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+}
+.viso-slide-over.show {
+    transform: translateX(0);
+}
+
+/* ===========================
+   PROGRESS
+   =========================== */
+.progress {
+    height: 6px;
+    border-radius: 9999px;
+    background-color: var(--viso-border-light);
+}
+.progress-bar {
+    background-color: var(--viso-primary);
+    border-radius: 9999px;
+    transition: width 0.3s ease;
+}
+
+/* ===========================
+   NOTES
+   =========================== */
+.viso-note-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid var(--viso-border-light);
+    border-left: 4px solid transparent;
+    transition: all 0.15s ease;
+}
+.viso-note-item:hover { background-color: #fff; }
+.viso-note-item.active {
+    background-color: #fff;
+    border-left-color: var(--viso-primary);
+}
+
+/* ===========================
+   UTILITIES
+   =========================== */
+.cursor-pointer { cursor: pointer; }
+.cursor-grab { cursor: grab; }
+.transition-all { transition: all 0.2s ease; }
+.hover-shadow:hover { box-shadow: var(--viso-shadow-md) !important; }
+.hover-bg-light:hover { background-color: #f8fafc !important; }
+.text-truncate-2 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+.fs-11 { font-size: 11px; }
+.fs-10 { font-size: 10px; }
+.ls-1 { letter-spacing: 0.5px; }
+.gap-05 { gap: 0.125rem; }
+
+/* Avatar stack */
+.viso-avatar-stack { display: flex; }
+.viso-avatar-stack img { margin-left: -8px; }
+.viso-avatar-stack img:first-child { margin-left: 0; }
+
+/* Online indicator */
+.viso-online-dot {
+    width: 8px; height: 8px;
+    background: var(--viso-success);
+    border: 2px solid var(--viso-sidebar-bg);
+    border-radius: 50%;
+    position: absolute;
+    bottom: 0; right: 0;
+}
+
+/* ===========================
+   ANIMATIONS
+   =========================== */
+@keyframes visoFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes visoSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.viso-fade-in { animation: visoFadeIn 0.3s ease; }
+.viso-slide-up { animation: visoSlideUp 0.4s ease; }
+
+/* Per-card stagger feel */
+.viso-task-row, .viso-kanban-card, .card {
+    animation: visoFadeIn 0.3s ease both;
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+@media (max-width: 768px) {
+    .viso-sidebar { transform: translateX(-100%); }
+    .viso-sidebar.mobile-open { transform: translateX(0); }
+    .viso-main { margin-left: 0 !important; }
+}
