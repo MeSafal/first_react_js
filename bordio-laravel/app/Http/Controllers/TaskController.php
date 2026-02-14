@@ -26,14 +26,19 @@ class TaskController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'project_id' => 'nullable|exists:projects,id',
-            'status' => 'in:Todo,In Progress,Under Review,Completed,Scheduled',
-            'priority' => 'in:Low,Normal,High,Urgent',
+            'status' => 'nullable|in:Todo,In Progress,Under Review,Completed,Scheduled',
+            'priority' => 'nullable|in:Low,Normal,High,Urgent',
             'due_date' => 'nullable|date',
             'time_estimate' => 'nullable|integer|min:0',
-            'recurrence' => 'in:none,daily,weekly,monthly',
+            'recurrence' => 'nullable|in:none,daily,weekly,monthly',
             'tags' => 'nullable|array',
             'description' => 'nullable|string',
+            'assignee_ids' => 'nullable|array',
+            'assignee_ids.*' => 'exists:users,id',
         ]);
+
+        $assigneeIds = $validated['assignee_ids'] ?? [];
+        unset($validated['assignee_ids']);
 
         $task = Task::create(array_merge([
             'status' => 'Todo',
@@ -42,8 +47,12 @@ class TaskController extends Controller
             'recurrence' => 'none',
         ], $validated));
 
-        // Assign current user
-        $task->assignees()->attach(Auth::id());
+        // Assign users (default to current user if none specified)
+        if (!empty($assigneeIds)) {
+            $task->assignees()->attach($assigneeIds);
+        } else {
+            $task->assignees()->attach(Auth::id());
+        }
 
         return response()->json($task->load(['subtasks', 'assignees', 'project']), 201);
     }
@@ -87,7 +96,6 @@ class TaskController extends Controller
         $newTask->status = 'Todo';
         $newTask->save();
 
-        // Copy subtasks
         foreach ($task->subtasks as $subtask) {
             $newTask->subtasks()->create([
                 'title' => $subtask->title,
@@ -95,10 +103,24 @@ class TaskController extends Controller
             ]);
         }
 
-        // Copy assignees
         $newTask->assignees()->sync($task->assignees->pluck('id'));
 
         return response()->json($newTask->load(['subtasks', 'assignees', 'project']), 201);
+    }
+
+    /**
+     * Sync assignees for a task
+     */
+    public function syncAssignees(Request $request, Task $task)
+    {
+        $validated = $request->validate([
+            'assignee_ids' => 'required|array',
+            'assignee_ids.*' => 'exists:users,id',
+        ]);
+
+        $task->assignees()->sync($validated['assignee_ids']);
+
+        return response()->json($task->load('assignees'));
     }
 
     // Subtask endpoints

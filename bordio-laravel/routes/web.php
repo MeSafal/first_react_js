@@ -6,11 +6,12 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Visobotics Web Routes
+| Bordio Web Routes
 |--------------------------------------------------------------------------
 */
 
@@ -24,14 +25,25 @@ Route::get('/', function () {
 // Authenticated Routes
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    // ── Page Routes (Blade views via DashboardController) ──
+    // ── Page Routes ──
     Route::get('/dashboard', [DashboardController::class, 'myWork'])->name('dashboard');
     Route::get('/my-work', [DashboardController::class, 'myWork'])->name('my-work');
-    Route::get('/projects/{project}', [DashboardController::class, 'projectView'])->name('project.view');
+    Route::get('/projects/{project}', [DashboardController::class, 'projectView'])->name('projects.show');
     Route::get('/calendar', [DashboardController::class, 'calendar'])->name('calendar');
     Route::get('/kanban', [DashboardController::class, 'kanban'])->name('kanban');
     Route::get('/notes', [DashboardController::class, 'notes'])->name('notes');
     Route::get('/team-workload', [DashboardController::class, 'teamWorkload'])->name('team-workload');
+
+    // ── User Management ──
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::post('/users', [UserController::class, 'store'])->name('users.store');
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+
+    // ── Projects (Blade form actions) ──
+    Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
+    Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
+    Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
 
     // ── Profile (Breeze) ──
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -48,6 +60,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/tasks/{task}', [TaskController::class, 'destroy']);
         Route::post('/tasks/{task}/duplicate', [TaskController::class, 'duplicate']);
 
+        // Task Assignees
+        Route::post('/tasks/{task}/assignees', [TaskController::class, 'syncAssignees']);
+
         // Subtasks
         Route::post('/tasks/{task}/subtasks', [TaskController::class, 'addSubtask']);
         Route::put('/tasks/{task}/subtasks/{subtask}', [TaskController::class, 'toggleSubtask']);
@@ -57,10 +72,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/tasks/{task}/messages', [TaskController::class, 'sendMessage']);
 
         // Projects
-        Route::get('/projects', [ProjectController::class, 'index']);
-        Route::post('/projects', [ProjectController::class, 'store']);
-        Route::put('/projects/{project}', [ProjectController::class, 'update']);
-        Route::delete('/projects/{project}', [ProjectController::class, 'destroy']);
+        Route::get('/projects', [ProjectController::class, 'apiIndex']);
+        Route::post('/projects', [ProjectController::class, 'apiStore']);
+        Route::put('/projects/{project}', [ProjectController::class, 'apiUpdate']);
+        Route::delete('/projects/{project}', [ProjectController::class, 'apiDestroy']);
 
         // Notes
         Route::get('/notes', [NoteController::class, 'index']);
@@ -72,6 +87,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/teams', [TeamController::class, 'index']);
         Route::post('/teams', [TeamController::class, 'store']);
         Route::delete('/teams/{team}', [TeamController::class, 'destroy']);
+
+        // Users
+        Route::get('/users', [UserController::class, 'apiList']);
     });
 });
 

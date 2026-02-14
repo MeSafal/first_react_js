@@ -1,56 +1,75 @@
-{{-- Reusable Task Row Component --}}
-{{-- Usage: @include('components.task-row', ['task' => $task]) --}}
-
+{{-- Task Row Component --}}
 @php
+    $priorityColor = match($task->priority) {
+        'Urgent' => 'danger',
+        'High' => 'warning',
+        'Low' => 'secondary',
+        default => 'primary',
+    };
+    $isOverdue = $task->due_date && $task->due_date->isPast() && $task->status !== 'Completed';
     $isCompleted = $task->status === 'Completed';
-    $isOverdue = $task->due_date && $task->due_date->isPast() && !$isCompleted;
     $assignees = $task->assignees ?? collect();
 @endphp
 
-<div class="viso-task-row viso-fade-in" onclick="VisoApp.openTaskModal({{ $task->id }})" data-task-id="{{ $task->id }}">
-    {{-- Status Check --}}
-    <div class="d-flex align-items-center justify-content-center {{ $isCompleted ? 'text-success' : 'text-muted' }}">
-        <i class="icon-{{ $isCompleted ? 'check-circle-2' : 'circle' }}" style="font-size:20px"></i>
+<div class="viso-task-row viso-fade-in {{ $isCompleted ? 'opacity-75' : '' }}"
+     onclick="VisoApp.openTaskModal({{ $task->id }})"
+     style="border-left: 3px solid var(--viso-{{ $priorityColor }}) !important">
+    
+    {{-- Checkbox --}}
+    <div onclick="event.stopPropagation()" class="form-check m-0">
+        <input class="form-check-input cursor-pointer" type="checkbox"
+               {{ $isCompleted ? 'checked' : '' }}
+               onchange="VisoApp.updateTaskField('status', this.checked ? 'Completed' : 'Todo')">
     </div>
 
-    {{-- Title --}}
-    <div class="task-title {{ $isCompleted ? 'completed' : '' }}">
-        {{ $task->title }}
+    {{-- Title & Tags --}}
+    <div class="d-flex flex-column flex-grow-1 ms-2" style="min-width:0">
+        <div class="d-flex align-items-center gap-2">
+            <span class="task-title text-truncate {{ $isCompleted ? 'completed' : 'text-dark' }}">
+                {{ $task->title }}
+            </span>
+            @if($task->project)
+                <span class="badge bg-light text-muted border fs-10 fw-normal d-none d-md-inline-block">
+                    {{ $task->project->name }}
+                </span>
+            @endif
+        </div>
+        
+        {{-- Metadata Row --}}
+        <div class="d-flex align-items-center gap-3 mt-1 text-muted fs-10">
+            @if($task->due_date)
+                <span class="d-flex align-items-center gap-1 {{ $isOverdue ? 'text-danger fw-bold' : '' }}">
+                    <i class="icon-calendar" style="font-size:10px"></i>
+                    {{ $task->due_date->format('M j') }}
+                </span>
+            @endif
+            
+            <span class="d-flex align-items-center gap-1">
+                <i class="icon-clock" style="font-size:10px"></i>
+                {{ $task->time_estimate }}m
+            </span>
+
+            @if($task->active_subtasks_count > 0)
+                <span class="d-flex align-items-center gap-1">
+                    <i class="icon-check-square" style="font-size:10px"></i>
+                    {{ $task->completed_subtasks_count }}/{{ $task->subtasks_count }}
+                </span>
+            @endif
+        </div>
     </div>
 
-    {{-- Meta --}}
-    <div class="d-flex align-items-center gap-3">
-        {{-- Due Date --}}
-        @if($task->due_date)
-            <div class="d-flex align-items-center gap-1 small {{ $isOverdue ? 'text-danger fw-bold' : 'text-muted' }}">
-                <i class="icon-clock" style="font-size:14px"></i>
-                <span>{{ $task->due_date->format('M j') }}</span>
-            </div>
-        @endif
-
-        {{-- Recurrence --}}
-        @if($task->recurrence && $task->recurrence !== 'none')
-            <div class="d-flex align-items-center gap-1 text-primary" title="Repeats {{ $task->recurrence }}">
-                <i class="icon-repeat" style="font-size:14px"></i>
-            </div>
-        @endif
-
-        {{-- Time Estimate --}}
-        <span class="small text-muted">{{ $task->time_estimate }}m</span>
-
-        {{-- Assignees --}}
-        @if($assignees->count())
-            <div class="viso-avatar-stack">
-                @foreach($assignees->take(3) as $user)
-                    <img src="{{ $user->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&size=24&background=3b82f6&color=fff' }}"
-                         alt="{{ $user->name }}" class="rounded-circle border border-white" width="24" height="24"
-                         title="{{ $user->name }}">
-                @endforeach
-                @if($assignees->count() > 3)
-                    <span class="rounded-circle bg-light border d-inline-flex align-items-center justify-content-center text-muted fw-bold"
-                          style="width:24px;height:24px;font-size:10px;margin-left:-8px">+{{ $assignees->count() - 3 }}</span>
-                @endif
-            </div>
-        @endif
-    </div>
+    {{-- Assignees --}}
+    @if($assignees->count())
+        <div class="viso-avatar-stack d-none d-sm-flex ms-3">
+            @foreach($assignees->take(3) as $user)
+                <img src="{{ $user->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&size=24&background=3b82f6&color=fff' }}"
+                     alt="{{ $user->name }}" class="rounded-circle border border-white" width="24" height="24"
+                     title="{{ $user->name }}">
+            @endforeach
+            @if($assignees->count() > 3)
+                <span class="rounded-circle bg-light border d-inline-flex align-items-center justify-content-center text-muted fw-bold"
+                      style="width:24px;height:24px;font-size:10px;margin-left:-6px">+{{ $assignees->count() - 3 }}</span>
+            @endif
+        </div>
+    @endif
 </div>

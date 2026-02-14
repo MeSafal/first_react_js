@@ -1,0 +1,177 @@
+i am working on this project
+
+the base is my admin pannel
+in react
+
+and inside there is a laravel project
+named inside folder bordio-laravel
+
+i want you  to work on that laravel app
+and make it working laravel project
+fully functional
+
+exact copy of react applicaiton in root folder 
+but in blade itself
+
+also ihere is my initial prompt provided to you
+take reference to what i am actually trying to build
+the final product you ship me should be orking project
+
+and ahh
+one major prolem
+currenlty in both, laravel and react
+there is no way i can create new project
+and create task on then
+and there is no way i can assign task to team member
+
+and there must be way to create new User (temp member)
+brom pannel itself
+
+and my-work 
+or dashboard of laravel and react,
+i am hating ti absolutely
+make it nice
+and full flexed laravel app to ship 
+
+my initial prompt
+but note: 
+this prompt ask you to design a react app from scratch
+which i have already built
+this pompt here is provided you as what is required 
+in react initial version
+and now i am wokring on full flexed laravel app
+
+
+INITIAL NOTS
+1. I DONT WANT IMPLEMENTATION PLAN
+2. CREATE THE TASK, DO NOT WAIT MY RESPONSE, KEEP WORKING AUTONOMOUSLY
+
+# THE MASTER PROMPT: ARCHITECTING "BORDIO CLONE" (ULTRA-DETAIL EDITION)
+
+**Role:** Senior Full-Stack Architect & Lead Product Designer.
+**Mission:** Build a high-fidelity, interactive, frontend-only React application that clones the "Bordio" platform. The application must simulate a full-stack environment using a robust local state (Zustand/Context) with dummy data. Every interaction seen in the reference video must be functional (CRUD, drag-and-drop, real-time-simulated chat).
+
+---
+
+## 1. VISUAL SYSTEM & UX SPECIFICATIONS
+
+* **Color Palette:**
+* **Sidebar (Primary):** Slate-950 (`#0f172a`) with a subtle border-right in Slate-800.
+* **Main Background:** Slate-50/White for a clean, professional aesthetic.
+* **Accent Colors:** * Blue (`#3b82f6`) for active selections and primary buttons.
+* Teal/Green for "Completed" or "Scheduled."
+* Yellow/Orange for "Meetings."
+* Red/Pink for "Urgent" or "Blocked" statuses.
+
+
+
+
+* **Typography:** Inter or a similar clean Sans-Serif. Use a strict hierarchy: 14px for body/labels, 18px for section headers, 24px for page titles.
+* **Component Styling:**
+* **Cards:** Rounded-lg (8px), subtle shadow (shadow-sm), white background.
+* **Buttons:** `rounded-md`, transition-all duration-200. Hover states should include a slight scale-up (1.02) or background darkening.
+* **Avatars:** Circular, overlapping in "Avatar Stacks" when multiple people are assigned.
+
+
+
+---
+
+## 2. THE CORE ARCHITECTURE
+
+* **Framework:** React (Vite) + Tailwind CSS + Lucide Icons + Framer Motion.
+* **State Management:** Use **Zustand**. Create a centralized `useBordioStore` that manages:
+* `users`: Array of {id, name, avatar, role}.
+* `projects`: Array of {id, name, folderId, members[], tasks[]}.
+* `tasks`: Array of {id, projectId, title, status, dueDate, timeEstimate, subtasks[], chatHistory[], files[]}.
+* `notes`: Array of {id, projectId, title, content, colorTags}.
+
+
+* **Routing:** React Router. `/my-work`, `/projects/:id`, `/calendar`, `/kanban`.
+
+---
+
+## 3. DETAILED PAGE/COMPONENT SPECIFICATIONS
+
+### A. The "Universal" Sidebar
+
+* **Structure:**
+1. **Header:** Organization switcher ("GIM Agency").
+2. **Navigation:** "My Work", "Teams" (Collapsible: Marketing, Design, Development), "Projects" (Folder-based hierarchy).
+3. **Visuals:** Hovering over a project should show a settings cog. Active states must be highlighted with a blue side-bar and light-blue background.
+
+
+
+### B. Project Task View (The List)
+
+* **Grouping:** Categorize tasks into "Active tasks" and "Completed tasks" (Collapsible).
+* **Inline Entry:** Bottom of list has an `+ Add task` input that immediately adds to the list on `Enter`.
+* **Task Row:** Displays status pill, task title, "Progress" fraction (e.g., 0/4 subtasks), due date tag, and assignee avatars.
+
+### C. THE TASK DETAIL MODAL (THE "BRAIN")
+
+When a task is clicked, open a side-drawer or modal:
+
+* **Header:** Breadcrumb (Project name), Task Title, "New look" (or similar category) tag.
+* **Fields:** Assignee (dropdown), Status (dropdown), Due Date (datepicker), Time blocks (number input).
+* **Functional Icons:** Row of buttons for: `+ Subtask`, `+ File`, `+ Tag`, `+ Repeat`.
+* **Checklist Section:** A progress bar that fills as subtasks are checked.
+* **THE INTEGRATED CHAT SYSTEM:**
+* **UI:** A dedicated right-column inside the modal.
+* **Logic:** Display a message history (Avatar + Name + Timestamp + Message).
+* **Simulated Real-time:** When a user types a message and hits send, append it to the `chatHistory` array in the store.
+* **Quick Access:** Implement a "Two-click" logic where clicking a chat icon in the global header opens the most recent task conversation.
+
+
+
+### D. THE INTELLIGENT CALENDAR
+
+* **The Waiting List (Right Sidebar):** A vertical list of all tasks with `dueDate: null`.
+* **Interaction:** Users must be able to **drag** a task from the Waiting List and **drop** it into a specific day in the calendar grid. This update must persist in the state.
+* **Daily Header:** Show the date and the sum of all `timeEstimate` values for tasks on that day (e.g., "7h 15m").
+* **Meeting Events:** Distinct card style. Clicking a meeting opens the **Meeting Modal** (Agenda editor, Participant list, Google Meet link generator simulation).
+
+### E. THE KANBAN BOARD
+
+* **Columns:** Todo, Scheduled, In Progress, Under Review, Completed.
+* **Customization:** An "Edit task statuses" button that opens a modal to add/remove/reorder columns using a drag-handle.
+* **Cards:** Show compact info: Title, tags, and small avatars.
+
+### F. NOTES & DOCUMENTATION
+
+* **Layout:** A sidebar list of notes on the left, a rich-text editor (or simulated) on the right.
+* **Detail:** Support "Main colors" color-coding at the bottom of notes (as seen in the video's design specs).
+
+### G. TEAM WORKLOAD VIEW
+
+* **Logic:** A horizontal scroll view where each row is a team member.
+* **Content:** A mini-calendar/timeline for each person showing their assigned tasks and meetings to visualize overlap and burnout.
+
+---
+
+## 4. INTERACTION & ANIMATION REQUIREMENTS (UI/UX POLISH)
+
+1. **Transitions:** When switching from List to Calendar, use a fade-in/slide-up transition via `AnimatePresence`.
+2. **Modals:** Use a "Spring" animation (stiffness: 300, damping: 30) for opening/closing.
+3. **Drag-and-Drop:** Use `dnd-kit`. When dragging, the card should tilt slightly (5 degrees) and show a drop-shadow.
+4. **Chat Feed:** Automatically scroll to the bottom when a new message is added.
+5. **State Consistency:** If I change a task to "Completed" on the Kanban board, it must immediately move to the "Completed" section in the List view and turn green on the Calendar.
+
+---
+
+## 5. DUMMY DATA SEED
+
+Start the app with:
+
+* **3 Teams:** Marketing, Design, Sales.
+* **5 Projects:** "New Website", "Mobile App", "CRM Sync".
+* **12 Tasks:** Distributed across different statuses and dates.
+* **4 Meetings:** One of which is a "Project Status Update" set to "Repeat Weekly."
+
+---
+
+**AI INSTRUCTIONS:** 1.  Initialize the project with `Vite`.
+2.  Install `zustand`, `framer-motion`, `@dnd-kit/core`, `lucide-react`, and `date-fns`.
+3.  Build the global state store first.
+4.  Build the layout shell.
+5.  Iteratively build the components.
+**STOP** and ask for clarification if a specific interaction (like the repeating meeting logic) needs more technical depth.

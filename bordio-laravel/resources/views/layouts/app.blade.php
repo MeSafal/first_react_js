@@ -1,45 +1,83 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Dashboard') — {{ config('app.name', 'Visobotics') }}</title>
+
+    <title>@yield('title', 'Bordio') - Premium Admin Panel</title>
+
+    {{-- Fonts --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    {{-- Icons (Feather Icons via CDN for simplicity, or use local if available) --}}
+    <link href="https://unpkg.com/feather-icons" rel="stylesheet">
+    {{-- Simple Line Icons as fallback/addition --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.5.5/css/simple-line-icons.min.css">
 
     {{-- Bootstrap 5 --}}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    {{-- Lucide Icons --}}
-    <link href="https://unpkg.com/lucide-static@latest/font/lucide.css" rel="stylesheet">
-    {{-- Google Font --}}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    {{-- Visobotics Theme --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    {{-- Custom Premium Theme --}}
     <link href="{{ asset('css/viso-theme.css') }}" rel="stylesheet">
 
     @stack('styles')
 </head>
-<body class="bg-light">
-    <div class="viso-app" id="visoApp">
+<body class="viso-app">
 
-        {{-- Sidebar --}}
-        @include('partials.sidebar')
+    {{-- Sidebar --}}
+    @include('partials.sidebar')
 
-        {{-- Main Content --}}
-        <main class="viso-main viso-scroll" id="visoMain">
+    {{-- Main Content Wrapper --}}
+    <main class="viso-main d-flex flex-column h-100 position-relative">
+        
+        {{-- Mobile Header (Visible only on small screens) --}}
+        <div class="d-md-none p-3 border-bottom bg-white d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+                <div class="viso-logo-icon" style="width:32px;height:32px;font-size:14px">B</div>
+                <span class="fw-bold text-dark">Bordio</span>
+            </div>
+            <button class="btn btn-light btn-sm" onclick="document.querySelector('.viso-sidebar').classList.toggle('mobile-open')">
+                <i class="icon-menu"></i>
+            </button>
+        </div>
+
+        {{-- Content Area --}}
+        <div class="flex-grow-1 position-relative overflow-hidden">
             @yield('content')
-        </main>
+        </div>
 
-        {{-- Task Slide-Over Modal --}}
-        @include('partials.task-modal')
+    </main>
 
-    </div>
+    {{-- Global Modals --}}
+    @include('partials.task-modal')
 
-    {{-- Bootstrap JS --}}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    {{-- jQuery --}}
+    {{-- Scripts --}}
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    {{-- Visobotics App JS --}}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    
+    {{-- Custom App Logic --}}
     <script src="{{ asset('js/viso-app.js') }}"></script>
+
+    <script>
+        // Initialize Feather Icons
+        feather.replace();
+        
+        // Mobile Sidebar Close on Click Outside
+        document.addEventListener('click', function(e) {
+            const sidebar = document.querySelector('.viso-sidebar');
+            const toggleBtn = document.querySelector('.d-md-none .btn');
+            if (window.innerWidth < 768 && 
+                sidebar.classList.contains('mobile-open') && 
+                !sidebar.contains(e.target) && 
+                !toggleBtn.contains(e.target)) {
+                sidebar.classList.remove('mobile-open');
+            }
+        });
+    </script>
 
     @stack('scripts')
 </body>
