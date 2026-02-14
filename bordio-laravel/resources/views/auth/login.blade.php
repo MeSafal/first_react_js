@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Visobotics</title>
+    {{-- Favicons --}}
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('img/logo/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('img/logo/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('img/logo/favicon-16x16.png') }}">
+    <link rel="shortcut icon" href="{{ asset('img/logo/favicon.ico') }}">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ asset('css/viso-theme.css') }}" rel="stylesheet">
     <style>
@@ -14,9 +20,7 @@
 <body>
     <div class="auth-card">
         <div class="text-center mb-4">
-            <div class="bg-primary rounded d-inline-flex align-items-center justify-content-center mb-2" style="width:48px;height:48px">
-                <span class="fw-bold text-white h4 mb-0">V</span>
-            </div>
+            <img src="{{ asset('img/logo/logo_primary.png') }}" alt="Visobotics" style="height: 48px; width: auto; margin-bottom: 1rem;">
             <h1 class="h4 fw-bold text-dark">Welcome Back</h1>
             <p class="text-muted small">Login to your Visobotics account</p>
         </div>

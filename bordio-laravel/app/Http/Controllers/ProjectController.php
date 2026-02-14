@@ -37,7 +37,7 @@ class ProjectController extends Controller
             return response()->json($project->load(['team', 'members']), 201);
         }
 
-        return redirect()->route('project.view', $project)->with('success', 'Project created successfully');
+        return redirect()->route('projects.show', $project)->with('success', 'Project created successfully');
     }
 
     /**

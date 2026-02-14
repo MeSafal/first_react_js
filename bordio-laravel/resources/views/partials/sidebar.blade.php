@@ -2,8 +2,8 @@
     {{-- Brand --}}
     <div class="px-4 py-4 mb-2">
         <a href="{{ route('my-work') }}" class="d-flex align-items-center gap-3 text-decoration-none">
-            <div class="viso-logo-icon">B</div>
-            <span class="fw-bold fs-5 text-white tracking-wide">Bordio</span>
+            <img src="{{ asset('img/logo/logo_secondary.png') }}" alt="Visobotics" style="height: 32px; width: auto;">
+            <span class="fw-bold fs-5 text-white tracking-wide">Visobotics</span>
         </a>
     </div>
 

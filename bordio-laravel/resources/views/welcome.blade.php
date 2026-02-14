@@ -3,7 +3,14 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Bordio - Premium Admin Panel</title>
+        <title>Visobotics - Premium Admin Panel</title>
+        
+        {{-- Favicons --}}
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('img/logo/apple-touch-icon.png') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('img/logo/favicon-32x32.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('img/logo/favicon-16x16.png') }}">
+        <link rel="shortcut icon" href="{{ asset('img/logo/favicon.ico') }}">
+
         {{-- Custom Premium Theme --}}
         <link href="{{ asset('css/viso-theme.css') }}" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -48,8 +55,8 @@
     </head>
     <body class="antialiased">
         <div class="welcome-card">
-            <div style="font-size: 64px; margin-bottom: 1rem;">🚀</div>
-            <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem;">Bordio</h1>
+            <img src="{{ asset('img/logo/logo_primary.png') }}" alt="Visobotics" style="height: 64px; width: auto; margin-bottom: 2rem;">
+            <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem;">Visobotics</h1>
             <p style="color: #94a3b8; font-size: 1.1rem; line-height: 1.6;">
                 Premium project management specifically designed for high-performance teams.
             </p>
