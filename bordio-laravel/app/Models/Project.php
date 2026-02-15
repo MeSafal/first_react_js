@@ -9,7 +9,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Project extends Model
 {
-    protected $fillable = ['name', 'team_id', 'status'];
+    protected $fillable = ['name', 'team_id', 'user_id', 'status'];
+
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     public function team(): BelongsTo
     {

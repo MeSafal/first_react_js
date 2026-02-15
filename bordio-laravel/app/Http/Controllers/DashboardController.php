@@ -58,7 +58,11 @@ class DashboardController extends Controller
         $activeTasks = $project->tasks->where('status', '!=', 'Completed');
         $completedTasks = $project->tasks->where('status', 'Completed');
 
-        return view('viso.project', compact('project', 'activeTasks', 'completedTasks'));
+        // Users not in project
+        $memberIds = $project->members->pluck('id');
+        $availableUsers = User::whereNotIn('id', $memberIds)->get();
+
+        return view('viso.project', compact('project', 'activeTasks', 'completedTasks', 'availableUsers'));
     }
 
     /**

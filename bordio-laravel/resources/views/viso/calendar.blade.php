@@ -2,132 +2,144 @@
 @section('title', 'Calendar')
 
 @section('content')
-<div class="d-flex h-100 align-items-stretch overflow-hidden">
-    {{-- Main Calendar --}}
-    <div class="flex-grow-1 d-flex flex-column h-100 bg-white">
-        {{-- Toolbar --}}
-        <div class="p-3 border-bottom d-flex align-items-center justify-content-between viso-slide-up">
-            <div class="d-flex align-items-center gap-3">
-                <h1 class="h4 fw-bold text-dark mb-0 ls-1">
-                    {{ \Carbon\Carbon::parse($weekStart)->format('F Y') }}
-                </h1>
-                <div class="btn-group shadow-sm">
-                    <a href="{{ route('calendar', ['week' => \Carbon\Carbon::parse($weekStart)->subWeek()->toDateString()]) }}"
-                       class="btn btn-light btn-sm border"><i class="icon-chevron-left" style="font-size:16px"></i></a>
-                    <a href="{{ route('calendar') }}" class="btn btn-light btn-sm border fw-medium px-3">Today</a>
-                    <a href="{{ route('calendar', ['week' => \Carbon\Carbon::parse($weekStart)->addWeek()->toDateString()]) }}"
-                       class="btn btn-light btn-sm border"><i class="icon-chevron-right" style="font-size:16px"></i></a>
-                </div>
-            </div>
-            <div class="d-flex align-items-center gap-2">
-                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 fw-medium">
-                    Week View
-                </span>
-            </div>
-        </div>
-
-        {{-- Day Headers --}}
-        <div class="d-flex border-bottom bg-light bg-opacity-50">
-            @foreach($weekDays as $day)
-                <div class="col py-3 small fw-bold text-muted text-uppercase text-center border-end fs-11 ls-1 {{ $day->isToday() ? 'text-primary bg-primary bg-opacity-5' : '' }}">
-                    {{ $day->format('D') }}
-                    <span class="d-block fs-4 text-dark mt-1 {{ $day->isToday() ? 'text-primary' : '' }}">{{ $day->format('j') }}</span>
-                </div>
-            @endforeach
-        </div>
-
-        {{-- Grid --}}
-        <div class="flex-grow-1 overflow-auto viso-scroll">
-            <div class="d-flex h-100" style="min-height:600px">
-                @foreach($weekDays as $day)
-                    @php
-                        $dayTasks = $tasks->filter(fn($t) => $t->due_date && $t->due_date->isSameDay($day));
-                        $isToday = $day->isToday();
-                        $totalMin = $dayTasks->sum('time_estimate');
-                        $timeStr = $totalMin >= 60 ? floor($totalMin/60).'h '.($totalMin%60).'m' : $totalMin.'m';
-                    @endphp
-                    <div class="col border-end border-bottom p-2 transition-all {{ $isToday ? 'bg-primary bg-opacity-05' : 'bg-white' }}"
-                         data-calendar-date="{{ $day->toDateString() }}"
-                         ondragover="event.preventDefault(); this.classList.add('bg-primary','bg-opacity-10')"
-                         ondragleave="this.classList.remove('bg-primary','bg-opacity-10')"
-                         ondrop="VisoApp.onCalendarDrop(event, '{{ $day->toDateString() }}')">
-
-                        {{-- Daily Summary --}}
-                        @if($dayTasks->count())
-                            <div class="mb-2 text-center">
-                                <span class="badge bg-white border text-muted shadow-sm fs-10 fw-normal rounded-pill px-2">
-                                    {{ $dayTasks->count() }} tasks • {{ $timeStr }}
-                                </span>
-                            </div>
-                        @endif
-
-                        <div class="d-flex flex-column gap-2">
-                            @foreach($dayTasks as $task)
-                                @php
-                                    $priorityColor = match($task->priority) {
-                                        'Urgent' => 'danger',
-                                        'High' => 'warning',
-                                        'Low' => 'secondary',
-                                        default => 'primary',
-                                    };
-                                    $isCompleted = $task->status === 'Completed';
-                                @endphp
-                                <div class="bg-white border p-2 rounded shadow-sm cursor-pointer transition-all hover-shadow viso-fade-in"
-                                     draggable="true" data-task-id="{{ $task->id }}"
-                                     ondragstart="VisoApp.onDragStart(event, {{ $task->id }})"
-                                     onclick="VisoApp.openTaskModal({{ $task->id }})"
-                                     style="border-left: 3px solid var(--viso-{{ $priorityColor }}) !important; opacity: {{ $isCompleted ? '0.6' : '1' }}">
-                                    <div class="fw-medium text-dark text-truncate small {{ $isCompleted ? 'text-decoration-line-through text-muted' : '' }}">
-                                        {{ $task->title }}
-                                    </div>
-                                    <div class="d-flex align-items-center justify-content-between mt-1">
-                                        <div class="d-flex align-items-center gap-1 text-muted fs-10">
-                                            @if($task->project)
-                                                <div class="viso-project-dot" style="width:6px;height:6px;background:var(--viso-primary)"></div>
-                                            @endif
-                                            <span>{{ $task->time_estimate }}m</span>
-                                        </div>
-                                        @if($task->assignees->count())
-                                            <img src="{{ $task->assignees->first()->avatar }}" class="rounded-circle" width="16" height="16">
-                                        @endif
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
+<div class="container-fluid h-100 p-0 overflow-hidden">
+    <div class="row g-0 h-100">
+        {{-- Main Calendar (9/12) --}}
+        <div class="col-lg-9 d-flex flex-column h-100 border-end bg-white">
+            {{-- Toolbar - Stays fixed at top --}}
+            <div class="px-4 py-3 border-bottom d-flex align-items-center justify-content-between viso-slide-up bg-white" style="z-index: 30">
+                <div class="d-flex align-items-center gap-4">
+                    <div>
+                        <h1 class="h3 fw-bold text-dark mb-0 tracking-tight">
+                            {{ \Carbon\Carbon::parse($weekStart)->format('F') }} 
+                            <span class="text-muted fw-normal">{{ \Carbon\Carbon::parse($weekStart)->format('Y') }}</span>
+                        </h1>
                     </div>
-                @endforeach
+                    <div class="d-flex align-items-center gap-1 bg-light p-1 rounded-3">
+                        <a href="{{ route('calendar', ['week' => \Carbon\Carbon::parse($weekStart)->subWeek()->toDateString()]) }}"
+                           class="btn btn-sm btn-white border-0 shadow-sm rounded-2 p-2 hover-bg-white transition-all text-dark">
+                           <i class="icon-chevron-left" style="font-size:16px"></i>
+                        </a>
+                        <a href="{{ route('calendar') }}" class="btn btn-sm btn-white border-0 shadow-sm rounded-2 px-3 py-2 fw-bold text-dark hover-bg-white transition-all">Today</a>
+                        <a href="{{ route('calendar', ['week' => \Carbon\Carbon::parse($weekStart)->addWeek()->toDateString()]) }}"
+                           class="btn btn-sm btn-white border-0 shadow-sm rounded-2 p-2 hover-bg-white transition-all text-dark">
+                           <i class="icon-chevron-right" style="font-size:16px"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2 bg-light px-3 py-2 rounded-pill shadow-sm">
+                    <div class="viso-project-dot bg-primary" style="width:8px; height:8px;"></div>
+                    <span class="small fw-bold text-dark">Weekly Schedule</span>
+                </div>
+            </div>
+
+            {{-- Unified Scroll Container for Header & Grid --}}
+            <div class="flex-grow-1 overflow-auto viso-scroll">
+                <div class="d-flex flex-column" style="min-width: 1000px; min-height: 100%">
+                    {{-- Day Headers --}}
+                    <div class="d-flex border-bottom bg-white sticky-top shadow-sm" style="z-index: 20; top: 0;">
+                        @foreach($weekDays as $day)
+                            <div class="col py-3 small fw-bold text-muted text-uppercase text-center border-end fs-11 ls-1 position-relative bg-white" 
+                                 style="border-color: rgba(0,0,0,0.05) !important">
+                                {{ $day->format('D') }}
+                                <div class="d-flex align-items-center justify-content-center mx-auto mt-1" 
+                                     style="width: 32px; height: 32px; border-radius: 50%; {{ $day->isToday() ? 'background: var(--viso-primary); color: white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);' : 'color: var(--bs-dark);' }}">
+                                    <span class="fs-5 fw-bold">{{ $day->format('j') }}</span>
+                                </div>
+                                @if($day->isToday())
+                                    <div class="position-absolute bottom-0 start-0 w-100" style="height: 3px; background: var(--viso-primary)"></div>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+
+                    {{-- Task Grid --}}
+                    <div class="d-flex flex-grow-1">
+                        @foreach($weekDays as $day)
+                            @php
+                                $dayTasks = $tasks->filter(fn($t) => $t->due_date && $t->due_date->isSameDay($day));
+                                $totalMin = $dayTasks->sum('time_estimate');
+                                $timeStr = $totalMin >= 60 ? floor($totalMin/60).'h '.($totalMin%60).'m' : $totalMin.'m';
+                            @endphp
+                            <div class="col border-end border-bottom p-2 transition-all bg-white {{ $day->isToday() ? 'viso-today-col' : '' }}"
+                                 data-calendar-date="{{ $day->toDateString() }}"
+                                 ondragover="event.preventDefault(); this.classList.add('bg-primary','bg-opacity-05')"
+                                 ondragleave="this.classList.remove('bg-primary','bg-opacity-05')"
+                                 ondrop="VisoApp.onCalendarDrop(event, '{{ $day->toDateString() }}')">
+
+                                @if($dayTasks->count())
+                                    <div class="mb-2 text-center">
+                                        <span class="badge bg-light border text-muted shadow-none fs-10 fw-normal rounded-pill px-2">
+                                            {{ $dayTasks->count() }} tasks • {{ $timeStr }}
+                                        </span>
+                                    </div>
+                                @endif
+
+                                <div class="d-flex flex-column gap-2">
+                                    @foreach($dayTasks as $task)
+                                        @include('components.kanban-card', ['task' => $task])
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    {{-- Waiting List Sidebar --}}
-    <div class="bg-light border-start d-flex flex-column" style="width:280px;min-width:280px">
-        <div class="p-3 border-bottom bg-white">
-            <h6 class="fw-bold text-dark small text-uppercase mb-1">Waiting List</h6>
-            <p class="text-muted fs-11 mb-0">Drag tasks to calendar to schedule</p>
-        </div>
-        <div class="flex-grow-1 overflow-auto p-3 viso-scroll">
-            @if($waitingList->count())
-                <div class="d-flex flex-column gap-2">
-                    @foreach($waitingList as $task)
-                        <div class="bg-white border p-2 rounded shadow-sm cursor-grab hover-shadow transition-all viso-fade-in"
-                             draggable="true" data-task-id="{{ $task->id }}"
-                             ondragstart="VisoApp.onDragStart(event, {{ $task->id }})">
-                            <div class="fw-medium text-dark small text-truncate">{{ $task->title }}</div>
-                            <div class="d-flex align-items-center justify-content-between mt-1">
-                                <span class="text-muted fs-10">{{ $task->time_estimate }}m</span>
-                                <span class="badge bg-secondary bg-opacity-10 text-secondary fs-10 border rounded-pill">Unscheduled</span>
+        {{-- Waiting List Sidebar (3/12) --}}
+        <div class="col-lg-3 d-flex flex-column h-100 bg-white border-start">
+            <div class="p-4 border-bottom">
+                <button class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2 py-3 fw-bold shadow-sm mb-4" 
+                        data-bs-toggle="modal" data-bs-target="#quickAddTaskModal" style="border-radius: 12px;">
+                    <i class="icon-plus-circle" style="font-size:20px"></i>
+                    Quick Add Task
+                </button>
+
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="fw-bold text-dark mb-1">Backlog</h6>
+                        <p class="text-muted fs-11 mb-0">Drag to calendar to schedule</p>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 p-2 rounded-3">
+                        <i class="icon-drawer text-primary" style="font-size:18px"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="flex-grow-1 overflow-auto p-4 viso-scroll bg-light bg-opacity-50">
+                @if($waitingList->count())
+                    <div class="d-flex flex-column gap-3">
+                        @foreach($waitingList as $task)
+                            <div class="viso-backlog-card bg-white border p-3 rounded-3 cursor-grab hover-shadow transition-all viso-fade-in shadow-sm border-0"
+                                 draggable="true" data-task-id="{{ $task->id }}"
+                                 ondragstart="VisoApp.onDragStart(event, {{ $task->id }})"
+                                 style="border-left: 4px solid var(--viso-primary) !important;">
+                                <div class="fw-bold text-dark small mb-2 lh-base">{{ $task->title }}</div>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center gap-1 text-muted fs-11">
+                                        <i class="icon-clock" style="font-size:10px"></i>
+                                        <span>{{ $task->time_estimate }}m</span>
+                                    </div>
+                                    @if($task->project)
+                                        <span class="badge bg-light text-muted fw-normal fs-10 border rounded-pill">{{ \Illuminate\Support\Str::limit($task->project->name, 15) }}</span>
+                                    @endif
+                                </div>
                             </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-5 px-4 opacity-75">
+                        <div class="bg-white p-4 rounded-circle d-inline-flex mb-3 shadow-sm border border-light">
+                            <i class="icon-check-circle text-success" style="font-size:32px"></i>
                         </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="text-center py-5 text-muted">
-                    <i class="icon-check-circle d-block mb-2" style="font-size:32px;opacity:0.2"></i>
-                    <p class="small fst-italic">All tasks scheduled!</p>
-                </div>
-            @endif
+                        <h6 class="fw-bold text-dark mb-1">All Caught Up!</h6>
+                        <p class="small text-muted">No pending tasks in your backlog.</p>
+                    </div>
+                @endif
+            </div>
         </div>
     </div>
 </div>
 @endsection
+
+@include('partials.quick-add-task-modal')

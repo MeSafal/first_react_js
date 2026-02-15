@@ -37,6 +37,38 @@
     {{-- Main Content Wrapper --}}
     <main class="viso-main d-flex flex-column h-100 position-relative">
         
+        {{-- Global Header --}}
+        <header class="viso-header">
+            <div class="dropdown">
+                <div class="viso-header-profile dropdown-toggle" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="text-end d-none d-sm-block">
+                        <div class="fw-bold fs-13 text-dark leading-tight">{{ auth()->user()->name }}</div>
+                        <div class="text-muted fs-11">{{ auth()->user()->hasRole('Super Admin') ? 'Administrator' : 'Team Member' }}</div>
+                    </div>
+                    <img src="{{ auth()->user()->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&size=30&background=3b82f6&color=fff' }}" 
+                         alt="User" class="rounded-circle border border-2 border-white shadow-sm" width="30" height="30">
+                </div>
+                <ul class="dropdown-menu dropdown-menu-end viso-profile-dropdown border-0" aria-labelledby="profileDropdown">
+                    <li class="px-3 py-2 mb-1">
+                        <div class="fw-bold fs-14 text-dark">{{ auth()->user()->name }}</div>
+                        <div class="text-muted fs-11 text-truncate">{{ auth()->user()->email }}</div>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#"><i class="icon-user"></i> My Profile</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="icon-settings"></i> Settings</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="dropdown-item text-danger">
+                                <i class="icon-logout"></i> Logout
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </header>
+
         {{-- Mobile Header (Visible only on small screens) --}}
         <div class="d-md-none p-3 border-bottom bg-white d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center gap-2">
@@ -49,14 +81,35 @@
         </div>
 
         {{-- Content Area --}}
-        <div class="flex-grow-1 position-relative overflow-hidden">
+        <div class="flex-grow-1 position-relative">
             @yield('content')
         </div>
+
+        {{-- Global Footer --}}
+        <footer class="mt-auto py-4 px-4 border-top bg-white bg-opacity-50">
+            <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
+                <div class="d-flex align-items-center gap-3">
+                    <a href="{{ route('kanban') }}" class="text-decoration-none text-muted small hover-text-primary fw-medium">Kanban Board</a>
+                    <span class="text-muted opacity-25">|</span>
+                    <a href="{{ route('calendar') }}" class="text-decoration-none text-muted small hover-text-primary fw-medium">Calendar</a>
+                    <span class="text-muted opacity-25">|</span>
+                    <a href="{{ route('my-work') }}" class="text-decoration-none text-muted small hover-text-primary fw-medium">My Work</a>
+                </div>
+                <div class="text-center text-md-end">
+                    <div class="text-muted small fw-medium mb-1">
+                        &copy; {{ date('Y') }} <span class="text-primary fw-bold">Visobotic</span>
+                    </div>
+                    <div class="text-muted tiny opacity-75">
+                        Designed and developed by <span class="text-dark fw-bold">Gokul Subedi</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
 
     </main>
 
     {{-- Global Modals --}}
-    @include('partials.task-modal')
+    @include('partials.task-slide-over')
 
     {{-- Scripts --}}
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>

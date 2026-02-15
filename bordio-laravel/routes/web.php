@@ -41,6 +41,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
     // ── Projects (Blade form actions) ──
+    Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
     Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
     Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
     Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
@@ -76,6 +77,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/projects', [ProjectController::class, 'apiStore']);
         Route::put('/projects/{project}', [ProjectController::class, 'apiUpdate']);
         Route::delete('/projects/{project}', [ProjectController::class, 'apiDestroy']);
+        Route::delete('/projects/{project}/members/{user}', [ProjectController::class, 'removeMember']);
+        Route::post('/projects/{project}/members', [ProjectController::class, 'addMembers']);
 
         // Notes
         Route::get('/notes', [NoteController::class, 'index']);

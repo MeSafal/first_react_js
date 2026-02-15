@@ -1,0 +1,334 @@
+/* VISOBOTICS PROFESSIONAL THEME - STANDARDIZED */
+
+/* --- TOKENS --- */
+:root {
+    /* Colors */
+    --viso-primary: #5e72e4;
+    --viso-primary-hover: #4e62d4;
+    --viso-secondary: #8392ab;
+    --viso-success: #2dce89;
+    --viso-info: #11cdef;
+    --viso-warning: #fb6340;
+    --viso-danger: #f5365c;
+
+    /* Layout Colors - Light Mode */
+    --viso-bg-body: #f5f7fa;
+    --viso-bg-sidebar-primary: #ffffff;
+    --viso-bg-sidebar-secondary: #f5f7fa;
+    /* Matches body for seamless look */
+    --viso-bg-surface: #ffffff;
+    --viso-border-color: rgba(0, 0, 0, 0.05);
+
+    --viso-text-main: #344767;
+    --viso-text-muted: #8392ab;
+
+    /* Shadows */
+    --viso-shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --viso-shadow-header: 0 2px 4px rgba(0, 0, 0, 0.02);
+
+    /* Curve Config */
+    --viso-curve-size: 20px;
+}
+
+[data-theme="dark"] {
+    /* Dark Mode Palette - Neutral Premium (GitHub/Linear Style) */
+    --viso-bg-body: #0d1117;
+    --viso-bg-sidebar-primary: #161b22;
+    --viso-bg-sidebar-secondary: #0d1117;
+    /* Match body */
+    --viso-bg-surface: #161b22;
+    --viso-border-color: #30363d;
+
+    --viso-text-main: #c9d1d9;
+    --viso-text-muted: #8b949e;
+
+    --viso-shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+    --viso-shadow-header: none;
+}
+
+/* --- BASICS --- */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--viso-bg-body);
+    color: var(--viso-text-main);
+    margin: 0;
+    overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    color: var(--viso-text-main);
+}
+
+a {
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+/* --- LAYOUT STRUCTURE --- */
+.viso-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* --- SIDEBAR PRIMARY (Icon Rail) --- */
+.viso-sidebar-primary {
+    width: 80px;
+    background-color: var(--viso-bg-sidebar-primary);
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 1040;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--viso-border-color);
+}
+
+.viso-brand-mark {
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: var(--viso-primary);
+}
+
+/* CURVED TAB ACTIVE STATE */
+#viso-primary-rail {
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.viso-nav-primary-item {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: var(--viso-text-muted);
+    cursor: pointer;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.viso-nav-primary-item:hover {
+    color: var(--viso-primary);
+}
+
+.viso-nav-primary-item.active {
+    background-color: var(--viso-bg-sidebar-secondary);
+    color: var(--viso-primary);
+    border-top-left-radius: var(--viso-curve-size);
+    border-bottom-left-radius: var(--viso-curve-size);
+    margin-left: 10px;
+    width: calc(100% - 10px);
+    box-shadow: -5px 0 10px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .viso-nav-primary-item.active {
+    box-shadow: -5px 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* The Curves */
+.viso-nav-primary-item.active::before,
+.viso-nav-primary-item.active::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    width: var(--viso-curve-size);
+    height: var(--viso-curve-size);
+    background-color: transparent;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.viso-nav-primary-item.active::before {
+    top: calc(-1 * var(--viso-curve-size));
+    box-shadow: 10px 10px 0 0 var(--viso-bg-sidebar-secondary);
+    border-bottom-right-radius: 50%;
+}
+
+.viso-nav-primary-item.active::after {
+    bottom: calc(-1 * var(--viso-curve-size));
+    box-shadow: 10px -10px 0 0 var(--viso-bg-sidebar-secondary);
+    border-top-right-radius: 50%;
+}
+
+/* --- SIDEBAR SECONDARY (Menu) --- */
+.viso-sidebar-secondary {
+    position: fixed;
+    top: 0;
+    left: 80px;
+    /* Locked to Primary */
+    width: 240px;
+    bottom: 0;
+    background-color: var(--viso-bg-sidebar-secondary);
+    z-index: 1030;
+    padding-top: 70px;
+    border-right: 1px solid var(--viso-border-color);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.viso-nav-link {
+    display: flex;
+    align-items: center;
+    padding: 10px 24px;
+    color: var(--viso-text-main);
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+}
+
+.viso-nav-link:hover {
+    color: var(--viso-primary);
+}
+
+.viso-nav-link i {
+    margin-right: 12px;
+    font-size: 1.1rem;
+    color: var(--viso-text-muted);
+}
+
+.viso-nav-link:hover i {
+    color: var(--viso-primary);
+}
+
+.viso-nav-header {
+    padding: 24px 24px 8px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--viso-text-muted);
+    font-weight: 700;
+}
+
+/* --- SIDEBAR COLLAPSED STATE --- */
+body.viso-sidebar-collapsed .viso-sidebar-secondary {
+    transform: translateX(-100%);
+}
+
+body.viso-sidebar-collapsed .viso-header {
+    left: 80px;
+}
+
+body.viso-sidebar-collapsed .viso-main-content {
+    margin-left: 80px;
+    width: calc(100% - 80px);
+}
+
+/* --- HEADER --- */
+.viso-header {
+    height: 70px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 320px;
+    /* 80 + 240 */
+    background-color: var(--viso-bg-sidebar-secondary);
+    /* Non-glass header for cleaner look in dark mode, matches body */
+    z-index: 1020;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    transition: left 0.3s ease;
+    border-bottom: 1px solid transparent;
+}
+
+/* Border only on scroll or usually none for seamless look */
+
+.viso-header-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+/* --- MAIN CONTENT --- */
+.viso-main-content {
+    margin-top: 70px;
+    margin-left: 320px;
+    /* 80 + 240 */
+    padding: 30px;
+    width: calc(100% - 320px);
+    transition: margin-left 0.3s ease, width 0.3s ease;
+}
+
+/* --- CARDS & UI --- */
+.card {
+    background-color: var(--viso-bg-surface);
+    border: 1px solid var(--viso-border-color);
+    border-radius: 6px;
+    box-shadow: var(--viso-shadow-card);
+}
+
+.card-header {
+    background: transparent;
+    border-bottom: 1px solid var(--viso-border-color);
+    padding: 16px 20px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--viso-primary);
+    border-color: var(--viso-primary);
+}
+
+.btn-primary:hover {
+    background-color: var(--viso-primary-hover);
+    border-color: var(--viso-primary-hover);
+}
+
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Inputs */
+.form-control {
+    background-color: var(--viso-bg-surface);
+    border: 1px solid var(--viso-border-color);
+    color: var(--viso-text-main);
+}
+
+.form-control:focus {
+    background-color: var(--viso-bg-surface);
+    color: var(--viso-text-main);
+    border-color: var(--viso-primary);
+    box-shadow: 0 0 0 3px rgba(94, 114, 228, 0.15);
+}
+
+.input-group-text {
+    background-color: var(--viso-bg-surface);
+    border: 1px solid var(--viso-border-color);
+    color: var(--viso-text-muted);
+}
+
+/* --- UTILS --- */
+.text-muted {
+    color: var(--viso-text-muted) !important;
+}
+
+.bg-light {
+    background-color: var(--viso-bg-body) !important;
+}
+
+[data-theme="dark"] .bg-light {
+    background-color: #161b22 !important;
+}

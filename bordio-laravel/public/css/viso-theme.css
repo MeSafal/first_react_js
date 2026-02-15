@@ -17,6 +17,7 @@
     --viso-sidebar-hover: #1e293b;
     --viso-sidebar-active: rgba(59, 130, 246, 0.12);
     --viso-sidebar-width: 260px;
+    --viso-sidebar-docked-width: 72px;
 
     --viso-bg-main: #f8fafc;
     --viso-bg-card: #ffffff;
@@ -101,8 +102,81 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 1000;
+    z-index: 1060;
+    /* Ensure it's above everything including main and modas */
     border-right: 1px solid rgba(255, 255, 255, 0.06);
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* overflow removed from here to allow floating toggle */
+}
+
+.viso-sidebar-body {
+    flex-grow: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.viso-sidebar-header {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.viso-sidebar.docked .viso-sidebar-header {
+    padding: 0;
+    justify-content: center;
+}
+
+/* Sidebar Toggle - Standardized external position on border edge */
+.sidebar-toggle {
+    position: absolute !important;
+    right: -12px !important;
+    /* Centered on border edge */
+    left: auto !important;
+    top: 24px !important;
+    width: 24px !important;
+    height: 24px !important;
+    background: var(--viso-sidebar-bg) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 50% !important;
+    color: white !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 1070 !important;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2) !important;
+    padding: 0 !important;
+    transition: all 0.2s ease !important;
+    text-decoration: none !important;
+}
+
+.sidebar-toggle:hover {
+    transform: scale(1.1);
+    background: var(--viso-sidebar-hover) !important;
+}
+
+.viso-sidebar.docked .sidebar-toggle {
+    right: -12px !important;
+    /* Keep it on the same spot relative to border */
+    top: 24px !important;
+}
+
+.viso-sidebar.docked .viso-brand-text span {
+    display: none;
+}
+
+.viso-sidebar.docked .viso-brand-text img {
+    margin: 0 !important;
+}
+
+.viso-sidebar.docked {
+    width: var(--viso-sidebar-docked-width);
+    min-width: var(--viso-sidebar-docked-width);
+    max-width: var(--viso-sidebar-docked-width);
 }
 
 .viso-main {
@@ -110,8 +184,78 @@ body {
     overflow-y: auto;
     overflow-x: hidden;
     background-color: var(--viso-bg-main);
-    margin-left: var(--viso-sidebar-width);
+    margin-left: var(--viso-sidebar-width) !important;
     min-height: 100vh;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.sidebar-docked .viso-main,
+.viso-sidebar.docked+.viso-main {
+    margin-left: var(--viso-sidebar-docked-width) !important;
+}
+
+/* ===========================
+   HEADER / NAVBAR
+   =========================== */
+.viso-header {
+    height: 50px;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--viso-border);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    /* Align profile to right */
+    padding: 0 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 1050;
+    /* Above page content but below sidebar mobile */
+}
+
+.viso-header-profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 4px 10px;
+    border-radius: 999px;
+    transition: all 0.2s ease;
+}
+
+.viso-header-profile:hover {
+    background: var(--viso-border-light);
+}
+
+.viso-profile-dropdown {
+    border: 1px solid var(--viso-border);
+    border-radius: 12px;
+    box-shadow: var(--viso-shadow-lg);
+    padding: 8px;
+    min-width: 200px;
+    margin-top: 10px;
+    animation: visoFadeIn 0.2s ease;
+}
+
+.viso-profile-dropdown .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--viso-text-main);
+}
+
+.viso-profile-dropdown .dropdown-item:hover {
+    background: var(--viso-primary-light);
+    color: var(--viso-primary);
+}
+
+.viso-profile-dropdown .dropdown-divider {
+    margin: 8px 0;
+    border-color: var(--viso-border-light);
 }
 
 /* ===========================
@@ -137,9 +281,11 @@ body {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.5rem 0.875rem;
-    margin: 1px 0.5rem;
-    border-radius: 8px;
+    padding: 0.625rem 1rem;
+    margin: 2px 0.75rem;
+    border-radius: 10px;
+    position: relative;
+    white-space: nowrap;
     color: var(--viso-sidebar-text);
     text-decoration: none;
     font-size: 0.8125rem;
@@ -165,19 +311,76 @@ body {
 
 .viso-sidebar-item i {
     width: 18px;
+    height: 18px;
     text-align: center;
     font-size: 16px;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.viso-sidebar.docked .viso-sidebar-item {
+    justify-content: center;
+    padding: 0.625rem 0;
+    gap: 0;
+}
+
+.viso-sidebar.docked .viso-sidebar-item span:not(.viso-sidebar-tooltip) {
+    display: none;
+}
+
+.viso-sidebar.docked .viso-sidebar-section-title {
+    text-align: center;
+    padding: 1.25rem 0 0.5rem;
+    font-size: 0;
+}
+
+.viso-sidebar.docked .viso-sidebar-section-title::after {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 0 auto;
+}
+
+.viso-sidebar.docked .viso-brand-text {
+    display: none;
+}
+
+/* Docked Tooltip/Label on Hover */
+.viso-sidebar-tooltip {
+    position: absolute;
+    left: calc(var(--viso-sidebar-docked-width) + 10px);
+    background: #1e293b;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 2000;
+    display: none;
+}
+
+.viso-sidebar.docked .viso-sidebar-item:hover .viso-sidebar-tooltip {
+    display: block;
+    opacity: 1;
+    transform: translateX(5px);
 }
 
 .viso-sidebar-section-title {
     text-transform: uppercase;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.8px;
-    color: rgba(255, 255, 255, 0.3);
-    padding: 0.5rem 0.875rem;
-    cursor: pointer;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.4);
+    padding: 1.25rem 1rem 0.5rem;
+    cursor: default;
     transition: color 0.15s;
 }
 
@@ -471,13 +674,15 @@ body {
     min-height: 200px;
 }
 
-.viso-kanban-drop.drag-over {
-    border-color: var(--viso-primary);
-    background-color: var(--viso-primary-light);
+.viso-kanban-drop.drag-over,
+.team-workload-drop.drag-over {
+    border: 2px dashed var(--viso-primary) !important;
+    background-color: var(--viso-primary-light) !important;
+    border-radius: var(--viso-radius);
 }
 
 .viso-kanban-card {
-    background: white;
+    /* background: white; Removed to allow dynamic bg colors */
     border: 1px solid var(--viso-border-light);
     border-radius: var(--viso-radius);
     box-shadow: var(--viso-shadow-sm);
@@ -724,6 +929,12 @@ body {
     color: var(--viso-danger);
 }
 
+.viso-assignee-chip.selected {
+    border-color: var(--viso-primary);
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--viso-primary);
+}
+
 /* ===========================
    ANIMATIONS
    =========================== */
@@ -754,7 +965,7 @@ body {
 @keyframes visoScaleIn {
     from {
         opacity: 0;
-        transform: scale(0.95);
+        transform: scale(0.98);
     }
 
     to {
@@ -817,6 +1028,32 @@ body {
     animation-delay: 0.15s;
 }
 
+.viso-task-hover-effect {
+    transition: all 0.2s ease;
+    border-radius: 8px;
+}
+
+.viso-task-hover-effect:hover {
+    background: var(--viso-primary-light);
+    transform: translateX(4px);
+}
+
+.viso-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.viso-stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
 .viso-metric-card {
     animation: visoScaleIn 0.4s ease both;
 }
@@ -835,6 +1072,65 @@ body {
 
 .viso-metric-card:nth-child(4) .viso-metric-card {
     animation-delay: 0.3s;
+}
+
+/* ===========================
+   PREMIUM UTILITIES
+   =========================== */
+.bg-gradient-dark {
+    background: linear-gradient(135deg, #1e293b, #0f172a) !important;
+}
+
+.bg-opacity-05 {
+    background-color: rgba(var(--viso-primary-rgb), 0.05) !important;
+}
+
+.btn-white {
+    background: #fff !important;
+    border: 1px solid rgba(0, 0, 0, 0.05) !important;
+    color: var(--viso-text-dark) !important;
+}
+
+.btn-white:hover {
+    background: var(--viso-primary-light) !important;
+    color: var(--viso-primary) !important;
+}
+
+.viso-avatar-stack {
+    display: flex;
+    align-items: center;
+}
+
+.viso-avatar-stack img {
+    margin-right: -8px;
+    transition: transform 0.2s ease;
+    cursor: pointer;
+}
+
+.viso-avatar-stack img:hover {
+    transform: translateY(-4px) scale(1.1);
+    z-index: 10;
+}
+
+.viso-slide-shimmer {
+    animation: visoFadeIn 0.5s ease-out;
+}
+
+.viso-task-hover-effect {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid transparent;
+}
+
+.viso-task-hover-effect:hover {
+    background: white !important;
+    border-color: var(--viso-primary-light) !important;
+    transform: translateX(8px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.viso-main {
+    padding-top: 0 !important;
+    /* Removed fixed padding-top as header is sticky and takes up space in the flow */
 }
 
 /* ===========================

@@ -34,8 +34,11 @@
                     Team Member
                 </div>
                 @foreach($weekDays as $day)
-                    <div class="flex-grow-1 p-3 border-end text-center small fw-bold text-uppercase {{ $day->isToday() ? 'text-primary bg-primary bg-opacity-05' : 'text-muted' }}">
+                    <div class="flex-grow-1 p-3 border-end text-center small fw-bold text-uppercase position-relative {{ $day->isToday() ? 'text-primary' : 'text-muted' }}">
                         {{ $day->format('D j') }}
+                        @if($day->isToday())
+                            <div class="position-absolute bottom-0 start-0 w-100" style="height: 3px; background: var(--viso-primary)"></div>
+                        @endif
                     </div>
                 @endforeach
             </div>
@@ -67,27 +70,15 @@
                                            $t->due_date->isSameDay($day);
                                 });
                             @endphp
-                            <div class="flex-grow-1 p-2 border-end d-flex flex-column gap-2" style="min-width:120px">
+                            <div class="flex-grow-1 p-2 border-end d-flex flex-column gap-2 team-workload-drop" 
+                                 style="min-width:120px"
+                                 data-user-id="{{ $user->id }}"
+                                 data-date="{{ $day->toDateString() }}"
+                                 ondragover="event.preventDefault(); this.classList.add('drag-over')"
+                                 ondragleave="this.classList.remove('drag-over')"
+                                 ondrop="VisoApp.onTeamWorkloadDrop(event, {{ $user->id }}, '{{ $day->toDateString() }}')">
                                 @foreach($dayTasks as $task)
-                                    @php
-                                        $priorityColor = match($task->priority) {
-                                            'Urgent' => 'danger',
-                                            'High' => 'warning',
-                                            'Low' => 'secondary',
-                                            default => 'primary',
-                                        };
-                                    @endphp
-                                    <div class="bg-white border rounded p-2 shadow-sm cursor-pointer hover-shadow transition-all"
-                                         style="border-left: 3px solid var(--viso-{{ $priorityColor }}) !important"
-                                         onclick="VisoApp.openTaskModal({{ $task->id }})">
-                                        <div class="fw-medium text-dark small text-truncate">{{ $task->title }}</div>
-                                        <div class="d-flex align-items-center justify-content-between mt-1">
-                                            <span class="text-muted fs-10">{{ $task->time_estimate }}m</span>
-                                            @if($task->status === 'Completed')
-                                                <i class="icon-check-circle text-success" style="font-size:10px"></i>
-                                            @endif
-                                        </div>
-                                    </div>
+                                    @include('components.kanban-card', ['task' => $task])
                                 @endforeach
                             </div>
                         @endforeach

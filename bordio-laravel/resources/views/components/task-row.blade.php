@@ -16,10 +16,13 @@
      style="border-left: 3px solid var(--viso-{{ $priorityColor }}) !important">
     
     {{-- Checkbox --}}
-    <div onclick="event.stopPropagation()" class="form-check m-0">
-        <input class="form-check-input cursor-pointer" type="checkbox"
-               {{ $isCompleted ? 'checked' : '' }}
-               onchange="VisoApp.updateTaskField('status', this.checked ? 'Completed' : 'Todo')">
+    <div onclick="event.stopPropagation()" class="p-2 me-1 cursor-pointer hover-bg-light rounded-circle transition-all d-flex align-items-center justify-content-center" style="width: 34px; height: 34px;">
+        <div class="form-check m-0 p-0">
+            <input class="form-check-input ms-0 cursor-pointer" type="checkbox"
+                   style="width: 1.15rem; height: 1.15rem;"
+                   {{ $isCompleted ? 'checked' : '' }}
+                   onchange="VisoApp.updateTaskField({{ $task->id }}, 'status', this.checked ? 'Completed' : 'Todo')">
+        </div>
     </div>
 
     {{-- Title & Tags --}}

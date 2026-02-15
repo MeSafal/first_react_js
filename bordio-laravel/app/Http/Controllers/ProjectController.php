@@ -10,6 +10,15 @@ use Illuminate\Http\Request;
 class ProjectController extends Controller
 {
     /**
+     * List all projects
+     */
+    public function index()
+    {
+        $projects = Project::with(['team', 'members', 'tasks'])->get();
+        return view('viso.projects.index', compact('projects'));
+    }
+
+    /**
      * Store project (Blade form POST)
      */
     public function store(Request $request)
@@ -24,6 +33,7 @@ class ProjectController extends Controller
         $project = Project::create([
             'name' => $validated['name'],
             'team_id' => $validated['team_id'] ?? null,
+            'user_id' => auth()->id(),
         ]);
 
         // Add members
@@ -102,5 +112,48 @@ class ProjectController extends Controller
     public function apiDestroy(Request $request, Project $project)
     {
         return $this->destroy($request, $project);
+    }
+
+    /**
+     * Remove member from project and handle task transitions
+     */
+    public function removeMember(Project $project, User $user)
+    {
+        // 1. Remove from project
+        $project->members()->detach($user->id);
+
+        // 2. Cascade to tasks: remove from assignees
+        $tasks = $project->tasks()->get();
+
+        foreach ($tasks as $task) {
+            // Remove user from task assignees
+            $task->assignees()->detach($user->id);
+
+            // 3. If no assignees left, assign to project owner (creator)
+            if ($task->assignees()->count() === 0 && $project->user_id) {
+                $task->assignees()->attach($project->user_id);
+            }
+        }
+
+        return response()->json([
+            'message' => 'Member removed successfully',
+            'task_reassigned' => true
+        ]);
+    }
+    /**
+     * Add new members to the project
+     */
+    public function addMembers(Request $request, Project $project)
+    {
+        $validated = $request->validate([
+            'user_ids' => 'required|array',
+            'user_ids.*' => 'exists:users,id',
+        ]);
+
+        $project->members()->attach($validated['user_ids']);
+
+        return response()->json([
+            'message' => count($validated['user_ids']) . ' members added successfully'
+        ]);
     }
 }

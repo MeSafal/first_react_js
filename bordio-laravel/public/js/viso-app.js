@@ -84,12 +84,15 @@ const VisoApp = (function ($) {
         });
     }
 
-    function updateTaskField(field, value) {
-        if (!activeTaskId) return;
+    function updateTaskField(id, field, value) {
+        const taskId = id || activeTaskId;
+        if (!taskId) return;
         const data = {};
         data[field] = value;
-        apiPut('/tasks/' + activeTaskId, data).done(() => {
-            // Subtle feedback without toast for field updates
+        apiPut('/tasks/' + taskId, data).done(() => {
+            if (field === 'status') {
+                reload(); // Refresh to update progress bars/counts
+            }
         });
     }
 
@@ -143,6 +146,12 @@ const VisoApp = (function ($) {
 
         const dueDate = $('#projectTaskDue').val();
         if (dueDate) data.due_date = dueDate;
+
+        const assigneeIds = [];
+        $('#projectTaskAssignee option:selected').each(function () {
+            assigneeIds.push(parseInt($(this).val()));
+        });
+        if (assigneeIds.length) data.assignee_ids = assigneeIds;
 
         apiPost('/tasks', data).done(() => {
             toast('Task created');
@@ -385,7 +394,7 @@ const VisoApp = (function ($) {
 
     function onCalendarDrop(event, dateStr) {
         event.preventDefault();
-        event.currentTarget.classList.remove('bg-primary', 'bg-opacity-10');
+        event.currentTarget.classList.remove('bg-primary', 'bg-opacity-05');
         document.querySelectorAll('.dragging').forEach(el => el.classList.remove('dragging'));
         if (!dragTaskId) return;
         apiPut('/tasks/' + dragTaskId, {
@@ -393,6 +402,22 @@ const VisoApp = (function ($) {
             status: 'Scheduled'
         }).done(() => {
             toast('Task scheduled');
+            reload();
+        });
+    }
+
+    function onTeamWorkloadDrop(event, userId, dateStr) {
+        event.preventDefault();
+        event.currentTarget.classList.remove('bg-primary', 'bg-opacity-05');
+        document.querySelectorAll('.dragging').forEach(el => el.classList.remove('dragging'));
+        if (!dragTaskId) return;
+
+        // Update due_date and assignee
+        apiPut('/tasks/' + dragTaskId, {
+            due_date: dateStr,
+            assignee_ids: [userId] // Reassign to the user whose row it was dropped in
+        }).done(() => {
+            toast('Task reassigned');
             reload();
         });
     }
@@ -477,9 +502,37 @@ const VisoApp = (function ($) {
     });
 
     // ========================
+    //  SIDEBAR DOCKING
+    // ========================
+    function initSidebar() {
+        const $sidebar = $('.viso-sidebar');
+        const $toggle = $('#sidebarToggle');
+
+        // Load state
+        const isDocked = localStorage.getItem('viso-sidebar-docked') === 'true';
+        if (isDocked) {
+            $sidebar.addClass('docked');
+            $('body').addClass('sidebar-docked');
+            $toggle.find('i').attr('class', 'icon-arrow-right');
+        }
+
+        $toggle.on('click', function (e) {
+            e.preventDefault();
+            const nowDocked = $sidebar.toggleClass('docked').hasClass('docked');
+            $('body').toggleClass('sidebar-docked', nowDocked);
+            localStorage.setItem('viso-sidebar-docked', nowDocked);
+
+            // Toggle icon
+            $toggle.find('i').attr('class', nowDocked ? 'icon-arrow-right' : 'icon-arrow-left');
+        });
+    }
+
+    // ========================
     //  INIT
     // ========================
     $(function () {
+        initSidebar();
+
         const firstNote = $('.viso-note-item').first();
         if (firstNote.length) {
             activeNoteId = firstNote.data('note-id');
@@ -492,6 +545,111 @@ const VisoApp = (function ($) {
             // Silently fail if not authenticated for users endpoint
         });
     });
+
+    // Toggle member selection in Quick Add Task modal
+    function toggleQuickTaskMember(userId, selectSelector = '#quickTaskAssignee', chipSelector = '.quick-task-chip') {
+        const $select = $(selectSelector);
+        const $option = $select.find(`option[value="${userId}"]`);
+        const isSelected = $option.prop('selected');
+
+        // Toggle selection
+        $option.prop('selected', !isSelected);
+
+        // Update UI
+        const $chip = $(chipSelector + `[data-user-id="${userId}"]`);
+
+        if (!isSelected) {
+            // Become selected
+            $chip.addClass('selected border-primary bg-primary bg-opacity-10');
+            $chip.find('.remove-btn').removeClass('d-none');
+        } else {
+            // Become unselected
+            $chip.removeClass('selected border-primary bg-primary bg-opacity-10');
+            $chip.find('.remove-btn').addClass('d-none');
+        }
+    }
+
+    // Filter members in Quick Add Task modal based on project
+    function filterQuickTaskMembers(selectEl) {
+        const projectId = $(selectEl).val();
+        const $option = $(selectEl).find(':selected');
+        const membersData = $option.attr('data-members');
+
+        if (!projectId || !membersData) {
+            // Show all if no project or no data (e.g. Personal)
+            $('.quick-task-chip').show();
+            return;
+        }
+
+        const memberIds = JSON.parse(membersData);
+
+        $('.quick-task-chip').each(function () {
+            const uid = $(this).data('user-id');
+            if (memberIds.includes(uid)) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    }
+
+    function removeProjectMember(projectId, userId) {
+        if (!confirm('Remove this member from the project? Their assigned tasks will be re-assigned if needed.')) return;
+
+        apiDelete(`/projects/${projectId}/members/${userId}`).done((res) => {
+            toast(res.message || 'Member removed');
+            $(`.viso-member-row[data-user-id="${userId}"]`).fadeOut(300, function () {
+                $(this).remove();
+                // Optionally reload or update task rows if re-assignment happened
+                if (res.task_reassigned) {
+                    setTimeout(() => reload(), 1000); // Simple reload for now to reflect re-assignments
+                }
+            });
+        }).fail(() => toast('Failed to remove member', 'danger'));
+    }
+
+    function toggleAddMemberChip(userId) {
+        const $chip = $(`.add-member-chip[data-user-id="${userId}"]`);
+        const isSelected = $chip.hasClass('selected');
+
+        if (!isSelected) {
+            $chip.addClass('selected border-primary bg-primary bg-opacity-10');
+            $chip.find('.remove-btn').removeClass('d-none');
+        } else {
+            $chip.removeClass('selected border-primary bg-primary bg-opacity-10');
+            $chip.find('.remove-btn').addClass('d-none');
+        }
+    }
+
+    function addProjectMembers(projectId) {
+        const selectedIds = [];
+        $('.add-member-chip.selected').each(function () {
+            selectedIds.push($(this).data('user-id'));
+        });
+
+        if (selectedIds.length === 0) {
+            toast('Please select at least one member', 'warning');
+            return;
+        }
+
+        apiPost(`/projects/${projectId}/members`, { user_ids: selectedIds }).done((res) => {
+            toast(res.message);
+            $('#addProjectMemberModal').modal('hide');
+            setTimeout(() => reload(), 1000); // Reload to reflect new members
+        }).fail(() => toast('Failed to add members', 'danger'));
+    }
+
+    function filterAddMembers(query) {
+        const q = query.toLowerCase();
+        $('.add-member-chip').each(function () {
+            const name = $(this).find('span').text().toLowerCase();
+            if (name.includes(q)) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    }
 
     // ========================
     //  PUBLIC API
@@ -516,6 +674,7 @@ const VisoApp = (function ($) {
         onKanbanDragStart,
         onKanbanDrop,
         onCalendarDrop,
+        onTeamWorkloadDrop,
         promptAddTask,
         selectNote,
         addNote,
@@ -524,6 +683,12 @@ const VisoApp = (function ($) {
         filterNotes,
         editUser,
         toast,
+        toggleQuickTaskMember,
+        filterQuickTaskMembers,
+        removeProjectMember,
+        addProjectMembers,
+        filterAddMembers,
+        toggleAddMemberChip
     };
 
 })(jQuery);
