@@ -119,7 +119,7 @@
     <div class="mt-auto px-4 py-3 border-top border-white border-opacity-10 d-flex align-items-center gap-3 sidebar-footer">
         <div class="position-relative">
             <img src="{{ auth()->user()->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&size=36&background=3b82f6&color=fff' }}" 
-                 alt="User" class="rounded-circle border border-2 border-white border-opacity-25" width="28" height="28">
+                 alt="User" class="rounded-2 border border-2 border-white border-opacity-25" width="28" height="28">
             <div class="viso-online-dot" style="width: 8px; height: 8px;"></div>
         </div>
         <div class="flex-grow-1 overflow-hidden viso-brand-text">
@@ -192,8 +192,8 @@
                                      data-role="{{ $userRole }}" 
                                      data-user-id="{{ $user->id }}"
                                      onclick="toggleProjectMember({{ $user->id }})">
-                                    <img src="{{ $user->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&size=22&background=3b82f6&color=fff' }}" 
-                                         class="rounded-circle" width="22" height="22">
+                                     <img src="{{ $user->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&size=22&background=3b82f6&color=fff' }}" 
+                                          class="rounded-2" width="22" height="22">
                                     <span>{{ $user->name }}</span>
                                     <span class="remove-btn {{ $isSelected ? '' : 'd-none' }}">
                                         <i class="icon-x" style="font-size:12px"></i>

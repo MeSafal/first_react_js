@@ -66,11 +66,11 @@
         <div class="viso-avatar-stack d-none d-sm-flex ms-3">
             @foreach($assignees->take(3) as $user)
                 <img src="{{ $user->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&size=24&background=3b82f6&color=fff' }}"
-                     alt="{{ $user->name }}" class="rounded-circle border border-white" width="24" height="24"
+                     alt="{{ $user->name }}" class="rounded-2 border border-white" width="24" height="24"
                      title="{{ $user->name }}">
             @endforeach
             @if($assignees->count() > 3)
-                <span class="rounded-circle bg-light border d-inline-flex align-items-center justify-content-center text-muted fw-bold"
+                <span class="rounded-2 bg-light border d-inline-flex align-items-center justify-content-center text-muted fw-bold"
                       style="width:24px;height:24px;font-size:10px;margin-left:-6px">+{{ $assignees->count() - 3 }}</span>
             @endif
         </div>

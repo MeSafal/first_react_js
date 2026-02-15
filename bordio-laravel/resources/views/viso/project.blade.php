@@ -194,7 +194,7 @@
                                     <div class="d-flex align-items-center justify-content-between viso-member-row" data-user-id="{{ $member->id }}">
                                         <div class="d-flex align-items-center gap-2">
                                             <img src="{{ $member->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($member->name).'&size=32&background=3b82f6&color=fff' }}" 
-                                                 alt="User" class="rounded-circle" width="32" height="32">
+                                                 class="rounded-2 border border-2 border-white shadow-sm" width="32" height="32">
                                             <div>
                                                 <div class="fw-bold text-dark fs-13">{{ $member->name }}</div>
                                                 <div class="text-muted fs-11">Member</div>
@@ -262,12 +262,11 @@
                     <div class="d-flex flex-wrap gap-2 p-2 bg-light rounded-3" id="addProjectMemberSelection" 
                          style="max-height: 250px; overflow-y: auto; min-height: 100px;">
                         @forelse($availableUsers as $u)
-                            <div class="viso-assignee-chip add-member-chip cursor-pointer transition-all border" 
+                            <div class="viso-assignee-chip add-member-chip cursor-pointer transition-all" 
                                  data-user-id="{{ $u->id }}"
-                                 onclick="VisoApp.toggleAddMemberChip({{ $u->id }})"
-                                 style="border-color: transparent;">
+                                 onclick="VisoApp.toggleAddMemberChip({{ $u->id }})">
                                 <img src="{{ $u->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($u->name).'&size=22&background=3b82f6&color=fff' }}" 
-                                     class="rounded-circle" width="22" height="22">
+                                     class="rounded-2" width="22" height="22">
                                 <span class="small fw-medium">{{ $u->name }}</span>
                                 <span class="remove-btn d-none">
                                     <i class="icon-x" style="font-size:12px"></i>
@@ -352,10 +351,9 @@
                             @php $isMe = $u->id === auth()->id(); @endphp
                             <div class="viso-assignee-chip project-task-chip cursor-pointer transition-all selected border-primary bg-primary bg-opacity-10" 
                                  data-user-id="{{ $u->id }}"
-                                 onclick="VisoApp.toggleQuickTaskMember({{ $u->id }}, '#projectTaskAssignee', '.project-task-chip')"
-                                 style="border: 1px solid transparent;">
+                                 onclick="VisoApp.toggleQuickTaskMember({{ $u->id }}, '#projectTaskAssignee', '.project-task-chip')">
                                 <img src="{{ $u->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($u->name).'&size=22&background=3b82f6&color=fff' }}" 
-                                     class="rounded-circle" width="22" height="22">
+                                     class="rounded-2" width="22" height="22">
                                 <span class="small fw-medium">{{ $u->name }}</span>
                                 <span class="remove-btn ms-1">
                                     <i class="icon-x" style="font-size:12px; vertical-align: middle;"></i>

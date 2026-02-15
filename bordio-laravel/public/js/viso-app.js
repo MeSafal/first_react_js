@@ -69,11 +69,16 @@ const VisoApp = (function ($) {
     }
 
     function deleteTask(id) {
-        if (!confirm('Delete this task?')) return;
-        apiDelete('/tasks/' + id).done(() => {
-            toast('Task deleted');
-            closeTaskModal();
-            reload();
+        confirmAction({
+            title: 'Delete Task?',
+            message: 'Are you sure you want to permanently delete this task?',
+            onConfirm: () => {
+                apiDelete('/tasks/' + id).done(() => {
+                    toast('Task deleted');
+                    closeTaskModal();
+                    reload();
+                });
+            }
         });
     }
 
@@ -455,10 +460,15 @@ const VisoApp = (function ($) {
 
     function deleteNote() {
         if (!activeNoteId) return;
-        if (!confirm('Delete this note?')) return;
-        apiDelete('/notes/' + activeNoteId).done(() => {
-            toast('Note deleted');
-            reload();
+        confirmAction({
+            title: 'Delete Note?',
+            message: 'Are you sure you want to permanently delete this note?',
+            onConfirm: () => {
+                apiDelete('/notes/' + activeNoteId).done(() => {
+                    toast('Note deleted');
+                    reload();
+                });
+            }
         });
     }
 
@@ -593,19 +603,37 @@ const VisoApp = (function ($) {
         });
     }
 
-    function removeProjectMember(projectId, userId) {
-        if (!confirm('Remove this member from the project? Their assigned tasks will be re-assigned if needed.')) return;
+    function confirmAction(options) {
+        const { title, message, onConfirm } = options;
+        $('#visoConfirmTitle').text(title || 'Are you sure?');
+        $('#visoConfirmMessage').text(message || 'This action cannot be undone.');
 
-        apiDelete(`/projects/${projectId}/members/${userId}`).done((res) => {
-            toast(res.message || 'Member removed');
-            $(`.viso-member-row[data-user-id="${userId}"]`).fadeOut(300, function () {
-                $(this).remove();
-                // Optionally reload or update task rows if re-assignment happened
-                if (res.task_reassigned) {
-                    setTimeout(() => reload(), 1000); // Simple reload for now to reflect re-assignments
-                }
-            });
-        }).fail(() => toast('Failed to remove member', 'danger'));
+        const $confirmBtn = $('#visoConfirmBtn');
+        $confirmBtn.off('click').on('click', function () {
+            $('#visoConfirmationModal').modal('hide');
+            if (onConfirm) onConfirm();
+        });
+
+        $('#visoConfirmationModal').modal('show');
+    }
+
+    function removeProjectMember(projectId, userId) {
+        confirmAction({
+            title: 'Remove Member?',
+            message: 'Remove this member from the project? Their assigned tasks will be re-assigned if needed.',
+            onConfirm: () => {
+                apiDelete(`/projects/${projectId}/members/${userId}`).done((res) => {
+                    toast(res.message || 'Member removed');
+                    $(`.viso-member-row[data-user-id="${userId}"]`).fadeOut(300, function () {
+                        $(this).remove();
+                        // Optionally reload or update task rows if re-assignment happened
+                        if (res.task_reassigned) {
+                            setTimeout(() => reload(), 1000); // Simple reload for now to reflect re-assignments
+                        }
+                    });
+                }).fail(() => toast('Failed to remove member', 'danger'));
+            }
+        });
     }
 
     function toggleAddMemberChip(userId) {
@@ -688,7 +716,8 @@ const VisoApp = (function ($) {
         removeProjectMember,
         addProjectMembers,
         filterAddMembers,
-        toggleAddMemberChip
+        toggleAddMemberChip,
+        confirmAction
     };
 
 })(jQuery);

@@ -76,7 +76,7 @@
                                      onclick="VisoApp.toggleQuickTaskMember({{ $u->id }})"
                                      style="border: 1px solid transparent;">
                                     <img src="{{ $u->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($u->name).'&size=22&background=3b82f6&color=fff' }}" 
-                                         class="rounded-circle" width="22" height="22">
+                                         class="rounded-2" width="22" height="22">
                                     <span class="small fw-medium">{{ $u->name }}</span>
                                     <span class="remove-btn {{ $isMe ? '' : 'd-none' }} ms-1">
                                         <i class="icon-x" style="font-size:12px; vertical-align: middle;"></i>

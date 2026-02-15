@@ -120,9 +120,31 @@
     <script src="{{ asset('js/viso-app.js') }}"></script>
 
     <script>
-        // Initialize Feather Icons
-        feather.replace();
-        
+        document.addEventListener('DOMContentLoaded', function() {
+            feather.replace();
+        });
+    </script>
+
+    {{-- Global Confirmation Modal --}}
+    <div class="modal fade" id="visoConfirmationModal" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 12px;">
+                <div class="modal-body p-4 text-center">
+                    <div class="bg-danger bg-opacity-10 p-3 rounded-circle d-inline-flex mb-3">
+                        <i class="icon-trash-2 text-danger" style="font-size: 24px;"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2" id="visoConfirmTitle">Are you sure?</h5>
+                    <p class="text-muted small mb-4" id="visoConfirmMessage">This action cannot be undone. Are you sure you want to proceed?</p>
+                    <div class="d-flex gap-2 justify-content-center">
+                        <button type="button" class="btn btn-light fw-bold px-4 rounded-pill border" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger fw-bold px-4 rounded-pill" id="visoConfirmBtn">Proceed</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
         // Mobile Sidebar Close on Click Outside
         document.addEventListener('click', function(e) {
             const sidebar = document.querySelector('.viso-sidebar');
